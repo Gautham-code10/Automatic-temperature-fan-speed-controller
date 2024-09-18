@@ -1,0 +1,73 @@
+#include<LiquidCrystal.h>
+#include "DHT.h"
+#define DHTPIN A0    // Digital pin connected to the DHT sensor
+#define DHTTYPE DHT11   // DHT 22  (AM2302), AM2321
+DHT dht(DHTPIN, DHTTYPE);
+
+LiquidCrystal lcd(4, 5, 6, 7, 8 ,9);
+int ena=10;
+int m1=11;
+int m2=12;
+int buzz=A1;
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(ena,OUTPUT);
+  pinMode(m1,OUTPUT);
+  pinMode(m2,OUTPUT);
+    pinMode(buzz,OUTPUT);
+  dht.begin();
+  Serial.begin(9600);
+lcd.begin(16, 2);
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Temperature Fan");
+lcd.setCursor(0, 1);
+lcd.print("Speed Control");
+delay(1500);
+}
+char ft;
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+
+
+if(t<24){
+   digitalWrite(buzz,0);
+analogWrite(ena,130);
+analogWrite(m1,80);
+analogWrite(m2,0);
+lcd.begin(16, 2);
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Motor Speed- 25%");
+lcd.setCursor(0, 1);
+lcd.print("Temperature:"+String(t));
+}
+if(t>24 && t < 31){
+ digitalWrite(buzz,0);
+analogWrite(ena,180);
+analogWrite(m1,160);
+analogWrite(m2,0);
+lcd.begin(16, 2);
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Motor Speed- 50%");
+lcd.setCursor(0, 1);
+lcd.print("Temperature:"+String(t));
+
+}
+if(t>31){
+  digitalWrite(buzz,1);
+analogWrite(ena,250);
+analogWrite(m1,250);
+analogWrite(m2,0);
+lcd.begin(16, 2);
+lcd.clear();
+lcd.setCursor(0, 0);
+lcd.print("Motor Speed- 100%");
+lcd.setCursor(0, 1);
+lcd.print("Temperature:"+String(t));
+
+}
+delay(1000);
+}
